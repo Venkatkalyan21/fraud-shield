@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: fraud-shield
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn flask_app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: FRAUD_SHIELD_SECRET
+        generateValue: true
+    healthCheckPath: /
+

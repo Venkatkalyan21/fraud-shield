@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ page_title or 'Fraud Shield — Detection Results' }}</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #050713;
+      --panel: rgba(13, 17, 36, 0.78);
+      --panel-strong: rgba(13, 18, 46, 0.92);
+      --accent-gradient: linear-gradient(135deg, #4ad0ff 0%, #7b61ff 50%, #a86bff 100%);
+      --text-primary: #f6f8ff;
+      --text-secondary: #c0c9ff;
+      --stroke: rgba(122, 130, 255, 0.22);
+      --stroke-strong: rgba(122, 130, 255, 0.42);
+      --radius-lg: 26px;
+      --radius-md: 18px;
+      --radius-sm: 14px;
+      --container: min(94vw, 1200px);
+      --transition: 280ms cubic-bezier(.19,1,.22,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      background: radial-gradient(circle at top right, rgba(122, 130, 255, 0.28), transparent 55%),
+                  radial-gradient(circle at bottom left, rgba(74, 208, 255, 0.18), transparent 55%),
+                  #050713;
+      color: var(--text-primary);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(40% 45% at 80% 0%, rgba(74, 208, 255, 0.16), transparent 70%),
+                  radial-gradient(40% 40% at 10% 30%, rgba(122, 130, 255, 0.18), transparent 70%);
+      opacity: 0.8;
+      z-index: 0;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(18px);
+      background: rgba(5, 7, 19, 0.78);
+      border-bottom: 1px solid rgba(122, 130, 255, 0.18);
+      transition: backdrop-filter 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+      will-change: backdrop-filter, background, box-shadow;
+    }
+
+    .nav-inner {
+      width: var(--container);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      height: 74px;
+      color: var(--text-secondary);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 600;
+    }
+
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: var(--accent-gradient);
+      box-shadow: 0 14px 38px rgba(74, 208, 255, 0.32);
+      position: relative;
+    }
+
+    .brand-badge::after {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border-radius: 12px;
+      background: rgba(5, 7, 19, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-actions a {
+      color: var(--text-secondary);
+      font-size: 0.88rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .nav-actions .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-radius: 16px;
+      border: 1px solid rgba(122, 130, 255, 0.24);
+      background: rgba(122, 130, 255, 0.12);
+      color: #f5f7ff;
+      font-weight: 600;
+      transition: transform var(--transition);
+    }
+
+    .nav-actions .btn-secondary:hover { transform: translateY(-3px); }
+
+    main {
+      width: var(--container);
+      margin: 60px auto 72px;
+      display: grid;
+      gap: 28px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .summary-hero {
+      display: grid;
+      gap: 26px;
+      padding: 36px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(140deg, rgba(13, 18, 46, 0.92), rgba(8, 12, 28, 0.7));
+      border: 1px solid rgba(122, 130, 255, 0.22);
+      box-shadow: 0 24px 70px rgba(3, 6, 18, 0.6);
+      opacity: 0;
+      animation: fadeInUp 0.6s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+      will-change: opacity, transform;
+      transform: translateZ(0);
+    }
+
+    .summary-eyebrow {
+      font-size: 0.85rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: rgba(122, 130, 255, 0.75);
+    }
+
+    .summary-hero h1 {
+      margin: 0;
+      font-size: clamp(2.3rem, 4vw, 3.2rem);
+      letter-spacing: -0.02em;
+    }
+
+    .summary-hero p {
+      margin: 0;
+      max-width: 720px;
+      color: var(--text-secondary);
+      font-size: 1.02rem;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .metric-card {
+      padding: 22px 24px;
+      border-radius: var(--radius-md);
+      background: rgba(7, 10, 26, 0.82);
+      border: 1px solid rgba(122, 130, 255, 0.2);
+      display: grid;
+      gap: 6px;
+      will-change: transform;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+
+    .metric-card strong {
+      font-size: 2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .metric-card span {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+    }
+
+    .risk-card {
+      padding: 28px;
+      border-radius: var(--radius-lg);
+      background: rgba(9, 12, 28, 0.82);
+      border: 1px solid rgba(122, 130, 255, 0.22);
+      display: grid;
+      gap: 18px;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      animation: fadeInUp 0.6s cubic-bezier(0.19, 1, 0.22, 1) 0.2s forwards;
+      will-change: opacity, transform;
+      transform: translateZ(0);
+    }
+
+    .risk-card::after {
+      content: "";
+      position: absolute;
+      inset: 20px;
+      border-radius: calc(var(--radius-lg) - 16px);
+      border: 1px solid rgba(122, 130, 255, 0.14);
+      pointer-events: none;
+    }
+
+    .risk-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 0.88rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .risk-LOW { background: rgba(34, 197, 94, 0.18); color: #86f7b9; border: 1px solid rgba(34, 197, 94, 0.35); }
+    .risk-MEDIUM { background: rgba(251, 191, 36, 0.18); color: #fcd34d; border: 1px solid rgba(251, 191, 36, 0.35); }
+    .risk-HIGH { background: rgba(248, 113, 113, 0.22); color: #fca5a5; border: 1px solid rgba(248, 113, 113, 0.42); }
+
+    .risk-details {
+      display: grid;
+      gap: 16px;
+      color: var(--text-secondary);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 22px;
+      border-radius: 16px;
+      background: var(--accent-gradient);
+      color: #04060f;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      border: none;
+      transition: transform var(--transition), box-shadow var(--transition);
+      will-change: transform;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+
+    .btn-primary:hover { transform: translateY(-4px); box-shadow: 0 24px 60px rgba(122, 130, 255, 0.45); }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 22px;
+      border-radius: 16px;
+      border: 1px solid rgba(122, 130, 255, 0.26);
+      background: rgba(122, 130, 255, 0.12);
+      color: #f5f7ff;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .insight-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 32px;
+      width: 100%;
+      margin-bottom: 32px;
+    }
+
+    @media (max-width: 900px) {
+      .insight-grid {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+    }
+
+    .chart-card {
+      padding: 26px;
+      border-radius: var(--radius-lg);
+      background: rgba(8, 12, 28, 0.84);
+      border: 1px solid rgba(122, 130, 255, 0.2);
+      display: grid;
+      gap: 18px;
+      opacity: 0;
+      animation: fadeInUp 0.6s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+      will-change: opacity, transform;
+      transform: translateZ(0);
+      min-width: 0;
+      overflow: hidden;
+      position: relative;
+      align-items: start;
+    }
+
+    .chart-card > div {
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
+    }
+
+    .chart-card .js-plotly-plot {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .chart-card .plotly {
+      margin: 0 auto !important;
+      display: block !important;
+    }
+
+    .chart-card .plot-container {
+      margin: 0 auto;
+      text-align: center;
+      width: 100%;
+    }
+
+    .chart-card .plot-container > div {
+      margin: 0 auto !important;
+      display: block !important;
+    }
+
+    /* Center all Plotly elements */
+    .chart-card .plotly .js-plotly-plot,
+    .chart-card .plotly .plot-container,
+    .chart-card div[id^="plotly"] {
+      margin-left: auto !important;
+      margin-right: auto !important;
+      display: block !important;
+    }
+
+    .chart-card:nth-child(1) { animation-delay: 0.1s; }
+    .chart-card:nth-child(2) { animation-delay: 0.2s; }
+    .chart-card:nth-child(3) { animation-delay: 0.3s; }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px) translateZ(0);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) translateZ(0);
+      }
+    }
+
+    .chart-card h3 { 
+      margin: 0 0 16px 0; 
+      font-size: 1.1rem; 
+      letter-spacing: -0.01em;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(122, 130, 255, 0.15);
+    }
+
+    .summary-card {
+      padding: 26px;
+      border-radius: var(--radius-lg);
+      background: rgba(9, 12, 28, 0.82);
+      border: 1px solid rgba(122, 130, 255, 0.2);
+      display: grid;
+      gap: 16px;
+      opacity: 0;
+      animation: fadeInUp 0.6s cubic-bezier(0.19, 1, 0.22, 1) 0.4s forwards;
+      will-change: opacity, transform;
+      transform: translateZ(0);
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: rgba(12, 16, 32, 0.9);
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(122, 130, 255, 0.2);
+      padding: 18px;
+      color: rgba(214, 220, 255, 0.92);
+    }
+
+    footer {
+      width: var(--container);
+      margin: 0 auto 42px;
+      text-align: center;
+      color: rgba(193, 203, 255, 0.62);
+      font-size: 0.9rem;
+    }
+
+    .modebar-btn--logo { display: none !important; }
+
+    @media (max-width: 860px) {
+      .nav-inner { flex-wrap: wrap; justify-content: center; height: auto; padding: 16px 0; }
+      .actions { justify-content: center; }
+      .metric-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    }
+
+    @media (max-width: 600px) {
+      .summary-hero, .chart-card, .summary-card, .risk-card { padding: 22px; }
+      .metric-card { padding: 18px; }
+      .insight-grid { 
+        grid-template-columns: 1fr; 
+        gap: 20px;
+      }
+      .chart-card {
+        padding: 20px;
+      }
+      .chart-card h3 {
+        font-size: 1rem;
+        margin-bottom: 12px;
+      }
+      .nav-actions { flex-wrap: wrap; justify-content: center; }
+      .btn-primary, .btn-outline { width: 100%; justify-content: center; }
+    }
+
+    /* Performance optimizations */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-inner">
+      <div class="brand" aria-label="Fraud Shield">
+        <span class="brand-badge" aria-hidden="true"></span>
+        <div>
+          <div style="font-size:1.02rem;">Fraud Shield</div>
+          <small style="color: var(--text-secondary); font-size:0.75rem; letter-spacing:0.24em; text-transform:uppercase;">Detection report</small>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <a href="/analyze">Run another analysis</a>
+        <a class="btn-secondary" href="{{ url_for('download', token=download_token) }}">Download CSV</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="summary-hero">
+      <div class="summary-eyebrow">Session summary</div>
+      <h1>Insight-ready fraud intelligence in seconds.</h1>
+      <p>Below is a full breakdown of your latest dataset run, including model decisions, probability distributions, and a rich textual summary ready for stakeholders.</p>
+
+      <div class="metric-grid">
+        <div class="metric-card">
+          <strong>{{ metrics.total_transactions }}</strong>
+          <span>Total transactions scanned</span>
+        </div>
+        <div class="metric-card">
+          <strong>{{ metrics.legitimate_count }}</strong>
+          <span>Legitimate predictions</span>
+        </div>
+        <div class="metric-card">
+          <strong>{{ metrics.fraud_count }}</strong>
+          <span>Flagged as potential fraud</span>
+        </div>
+        <div class="metric-card">
+          <strong>{{ '%.1f'|format(metrics.fraud_rate) }}%</strong>
+          <span>Overall fraud rate</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="risk-card">
+      <div class="risk-label risk-{{ metrics.risk_level|upper }}">Risk level: {{ metrics.risk_level }} {{ metrics.risk_icon }}</div>
+      <div class="risk-details">
+        <p>The detection engine assigned a <strong>{{ metrics.risk_level }}</strong> risk profile to this dataset. Use the downloadable CSV to action alerts or reconcile with existing chargeback workflows.</p>
+        <div class="actions">
+          <a class="btn-primary" href="{{ url_for('download', token=download_token) }}">Download enriched CSV</a>
+          <a class="btn-outline" href="/analyze">Run another dataset</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="insight-grid">
+      <article class="chart-card">
+        <h3>Transaction distribution</h3>
+        <div class="plot-container" style="width: 100%; overflow: hidden; position: relative; display: flex; justify-content: center; align-items: center;">
+          {{ dist_html | safe }}
+        </div>
+      </article>
+      {% if right_html %}
+        <article class="chart-card">
+          <h3>Fraud probability spread</h3>
+          <div class="plot-container" style="width: 100%; overflow: hidden; position: relative; display: flex; justify-content: center; align-items: center;">
+            {{ right_html | safe }}
+          </div>
+        </article>
+      {% endif %}
+    </section>
+
+    <section class="summary-card">
+      <h3>Executive summary</h3>
+      <pre>{{ summary }}</pre>
+    </section>
+  </main>
+
+  <footer>© 2025 Fraud Shield. Intelligence engineered for security, compliance, and trust.</footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>

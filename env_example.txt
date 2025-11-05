@@ -1,0 +1,42 @@
+# Fraud Detection System Environment Configuration
+# Copy this file to .env and modify the values as needed
+
+# Application Settings
+APP_NAME=Fraud Detection System
+APP_VERSION=2.0.0
+DEBUG=False
+
+# Server Configuration
+STREAMLIT_SERVER_PORT=8501
+STREAMLIT_SERVER_ADDRESS=localhost
+STREAMLIT_SERVER_HEADLESS=false
+
+# Model Configuration
+MODEL_DIR=models
+DEFAULT_MODEL=random_forest_fraud.pkl
+
+# Risk Thresholds
+LOW_RISK_THRESHOLD=2.0
+MEDIUM_RISK_THRESHOLD=5.0
+HIGH_RISK_THRESHOLD=5.0
+
+# File Upload Settings
+MAX_FILE_SIZE_MB=200
+ALLOWED_FILE_TYPES=csv
+UPLOAD_ENCODING=utf-8
+
+# Security Settings
+ENABLE_LOGGING=true
+LOG_LEVEL=INFO
+SECURE_COOKIES=true
+
+# Database Settings (for future use)
+# DB_HOST=localhost
+# DB_PORT=5432
+# DB_NAME=fraud_detection
+# DB_USER=admin
+# DB_PASSWORD=secure_password
+
+# API Keys (for future external services)
+# OPENAI_API_KEY=your_openai_key_here
+# TWILIO_API_KEY=your_twilio_key_here

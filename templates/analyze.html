@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ page_title or 'Fraud Shield — Intelligent Analysis' }}</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #050713;
+      --panel: rgba(10, 14, 34, 0.82);
+      --panel-soft: rgba(13, 18, 42, 0.64);
+      --stroke: rgba(120, 130, 255, 0.22);
+      --stroke-strong: rgba(120, 130, 255, 0.42);
+      --accent: #4ad0ff;
+      --accent-strong: #7b61ff;
+      --accent-gradient: linear-gradient(135deg, #4ad0ff 0%, #7b61ff 55%, #a86bff 100%);
+      --text-primary: #f6f8ff;
+      --text-muted: #c0c9ff;
+      --danger: #ff6b8a;
+      --radius-lg: 26px;
+      --radius-md: 18px;
+      --radius-sm: 14px;
+      --container: min(94vw, 1120px);
+      --transition: 280ms cubic-bezier(.19,1,.22,1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: radial-gradient(circle at top right, rgba(122, 130, 255, 0.25), transparent 55%),
+                  radial-gradient(circle at bottom left, rgba(74, 208, 255, 0.16), transparent 55%),
+                  var(--bg);
+      color: var(--text-primary);
+      font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      letter-spacing: 0.01em;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(50% 50% at 20% 20%, rgba(74, 208, 255, 0.16), transparent 70%),
+                  radial-gradient(45% 45% at 80% 10%, rgba(122, 130, 255, 0.18), transparent 70%);
+      filter: blur(0px);
+      opacity: 0.8;
+      z-index: 0;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(18px);
+      background: rgba(5, 7, 19, 0.78);
+      border-bottom: 1px solid rgba(122, 130, 255, 0.16);
+      transition: backdrop-filter 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+      will-change: backdrop-filter, background, box-shadow;
+    }
+
+    .nav-inner {
+      width: var(--container);
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      height: 74px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 600;
+      letter-spacing: 0.015em;
+    }
+
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: var(--accent-gradient);
+      box-shadow: 0 14px 36px rgba(74, 208, 255, 0.34);
+      position: relative;
+    }
+
+    .brand-badge::after {
+      content: "";
+      position: absolute;
+      inset: 6px;
+      border-radius: 12px;
+      background: rgba(5, 7, 19, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .nav-links span {
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(122, 130, 255, 0.12);
+      border: 1px solid rgba(122, 130, 255, 0.18);
+    }
+
+    main {
+      width: var(--container);
+      margin: 60px auto 80px;
+      position: relative;
+      z-index: 3;
+      display: grid;
+      gap: 28px;
+    }
+
+    .hero-panel {
+      padding: 34px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(150deg, rgba(13, 18, 42, 0.88), rgba(9, 13, 32, 0.66));
+      border: 1px solid rgba(122, 130, 255, 0.18);
+      box-shadow: 0 22px 65px rgba(3, 6, 18, 0.65);
+      display: grid;
+      gap: 22px;
+    }
+
+    .hero-panel h1 {
+      margin: 0;
+      font-size: clamp(2.2rem, 4vw, 3.1rem);
+      letter-spacing: -0.02em;
+    }
+
+    .hero-panel p {
+      margin: 0;
+      color: var(--text-muted);
+      max-width: 640px;
+      font-size: 1rem;
+    }
+
+    .hero-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      background: rgba(122, 130, 255, 0.14);
+      border: 1px solid rgba(122, 130, 255, 0.24);
+      color: rgba(226, 229, 255, 0.9);
+      width: fit-content;
+      font-size: 0.88rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .hero-meta {
+      display: grid;
+      gap: 16px;
+      font-size: 0.95rem;
+      color: rgba(203, 209, 255, 0.85);
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .status-card {
+      padding: 18px;
+      border-radius: var(--radius-md);
+      background: rgba(7, 10, 26, 0.72);
+      border: 1px solid rgba(122, 130, 255, 0.18);
+      display: grid;
+      gap: 4px;
+    }
+
+    .status-card strong {
+      font-size: 1.4rem;
+      letter-spacing: -0.01em;
+    }
+
+    .workspace {
+      display: grid;
+      gap: 24px;
+      padding: 34px;
+      border-radius: var(--radius-lg);
+      background: linear-gradient(140deg, rgba(8, 11, 24, 0.92), rgba(8, 12, 28, 0.68));
+      border: 1px solid rgba(122, 130, 255, 0.2);
+      box-shadow: 0 26px 72px rgba(3, 6, 18, 0.58);
+    }
+
+    .workspace-header {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .workspace-header h2 {
+      margin: 0;
+      font-size: 1.4rem;
+      letter-spacing: -0.015em;
+    }
+
+    .workspace-header p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    form { display: grid; gap: 24px; }
+
+    .dropzone {
+      border: 1px dashed rgba(122, 130, 255, 0.5);
+      border-radius: var(--radius-md);
+      background: rgba(14, 16, 33, 0.65);
+      padding: 36px;
+      text-align: center;
+      display: grid;
+      gap: 14px;
+      transition: border-color var(--transition), background var(--transition), transform var(--transition);
+      will-change: transform, border-color, background;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+
+    .dropzone:hover {
+      border-color: rgba(74, 208, 255, 0.85);
+      background: rgba(12, 16, 34, 0.82);
+    }
+
+    .dropzone input[type="file"] {
+      display: none;
+    }
+
+    .dropzone label {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 16px 22px;
+      border-radius: 16px;
+      background: rgba(122, 130, 255, 0.16);
+      border: 1px solid rgba(122, 130, 255, 0.28);
+      color: #f2f4ff;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform var(--transition), border-color var(--transition);
+    }
+
+    .dropzone label:hover {
+      transform: translateY(-4px);
+      border-color: rgba(74, 208, 255, 0.6);
+    }
+
+    .dropzone small {
+      color: rgba(203, 209, 255, 0.75);
+      font-size: 0.9rem;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 16px 28px;
+      border-radius: 18px;
+      border: none;
+      background: var(--accent-gradient);
+      color: #04060f;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: transform var(--transition), box-shadow var(--transition);
+      will-change: transform;
+      transform: translateZ(0);
+      backface-visibility: hidden;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 26px 64px rgba(122, 130, 255, 0.45);
+    }
+
+    .requirements {
+      display: grid;
+      gap: 14px;
+      padding: 22px;
+      border-radius: var(--radius-md);
+      background: rgba(6, 9, 22, 0.86);
+      border: 1px solid rgba(122, 130, 255, 0.16);
+    }
+
+    .requirements strong { font-size: 0.95rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(122, 130, 255, 0.75); }
+
+    .requirements ul {
+      margin: 0;
+      padding: 0 0 0 18px;
+      color: rgba(210, 214, 255, 0.85);
+      font-size: 0.95rem;
+    }
+
+    .note {
+      font-size: 0.88rem;
+      color: rgba(203, 209, 255, 0.7);
+    }
+
+    .flash {
+      padding: 16px 18px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 107, 138, 0.42);
+      background: rgba(255, 107, 138, 0.08);
+      color: #ff94ab;
+      font-size: 0.95rem;
+      box-shadow: inset 0 0 0 1px rgba(255, 107, 138, 0.12);
+    }
+
+    footer {
+      width: var(--container);
+      margin: 0 auto 40px;
+      text-align: center;
+      color: rgba(193, 203, 255, 0.62);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 720px) {
+      .nav-inner { flex-direction: column; height: auto; padding: 16px 0; }
+      .nav-links { flex-wrap: wrap; justify-content: center; }
+      .hero-panel, .workspace { padding: 26px; }
+      .status-grid { grid-template-columns: 1fr 1fr; }
+      main { margin-top: 42px; }
+    }
+
+    @media (max-width: 540px) {
+      .status-grid { grid-template-columns: 1fr; }
+      .dropzone { padding: 28px 20px; }
+      .btn-primary { width: 100%; }
+      .requirements { padding: 18px; }
+    }
+
+    /* Performance optimizations */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-inner">
+      <div class="brand" aria-label="Fraud Shield">
+        <span class="brand-badge" aria-hidden="true"></span>
+        <div>
+          <div style="font-size:1.02rem;">Fraud Shield</div>
+          <small style="color: var(--text-muted); font-size:0.75rem; letter-spacing:0.24em; text-transform:uppercase;">Analysis cockpit</small>
+        </div>
+      </div>
+      <div class="nav-links">
+        <span>Upload</span>
+        <span>Validate</span>
+        <span>Predict</span>
+        <span>Summarize</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-panel">
+      <div class="hero-pill">Intake & intelligence</div>
+      <h1>Inspect transactions, surface anomalies, and download the evidence trail.</h1>
+      <p>Upload any credit-card transaction CSV to unleash our machine-learning detection engine. We standardize your data, predict risk levels, and generate high-fidelity reports you can share across compliance and operations.</p>
+      <div class="hero-meta">
+        <div>🔍 Automated quality checks catch schema issues before analysis runs.</div>
+        <div>🧠 Models tuned for the classic V1–V28 anonymized feature set and live commerce feeds.</div>
+      </div>
+      <div class="status-grid">
+        <div class="status-card">
+          <strong>{{ row_count or 'Ready' }}</strong>
+          <span>Rows prepared in last session</span>
+        </div>
+        <div class="status-card">
+          <strong>{{ model_path or 'Model: Active' }}</strong>
+          <span>Current inference model</span>
+        </div>
+        <div class="status-card">
+          <strong>CSV • UTF-8</strong>
+          <span>Supported formats</span>
+        </div>
+      </div>
+    </section>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <section class="workspace">
+      <div class="workspace-header">
+        <h2>Upload your transactions</h2>
+        <p>Drag and drop your CSV or select it manually. We never store your files—analysis happens in-memory.</p>
+      </div>
+
+      <form action="{{ url_for('predict') }}" method="post" enctype="multipart/form-data">
+        <div class="dropzone" role="button" tabindex="0">
+          <label for="file">📁 Choose a CSV file to analyze</label>
+          <small>Expected columns: V1–V28, Amount, and optional Class. Max size 50MB.</small>
+          <input id="file" name="file" type="file" accept=".csv" required />
+        </div>
+
+        <div class="requirements">
+          <strong>Before you start</strong>
+          <ul>
+            <li>Ensure numeric columns use a period (.) for decimals and no thousand separators.</li>
+            <li>Include the <code>Class</code> column if you want benchmarking against known outcomes.</li>
+            <li>All timestamps or identifiers will be passed through untouched for your downstream systems.</li>
+          </ul>
+          <div class="note">Tip: Need a dataset to experiment with? Grab the open-source credit card fraud CSV from our README resources.</div>
+        </div>
+
+        <button class="btn-primary" type="submit">Run analysis ↗</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>© 2025 Fraud Shield. Precision intelligence for modern fraud teams.</footer>
+
+  <script src="/app.js"></script>
+</body>
+</html>
