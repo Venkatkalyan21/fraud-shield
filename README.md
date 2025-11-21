@@ -9,7 +9,7 @@ A modern, interactive web application for detecting fraudulent credit card trans
 - **Responsive Layout**: Wide layout with collapsible sidebar
 - **Interactive Elements**: Hover effects, progress indicators, and dynamic content
 
-### 📊 Advanced Analytics
+### 📊 Advanced Analyticss
 - **Real-time Metrics**: Live transaction counts, fraud rates, and risk levels
 - **Interactive Visualizations**: Pie charts, histograms, and bar charts using Plotly
 - **Risk Assessment**: Automated risk level classification (Low/Medium/High)
